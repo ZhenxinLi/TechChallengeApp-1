@@ -20,6 +20,8 @@ jobs:
     - name: Build
       run: |
         chmod +x build.sh
+        go get github.com/GeertJohan/go.rice/...
+        sudo dpkg-reconfigure dash
         ./build.sh
     - name: Deploy to Server
       uses: AEnterprise/rsync-deploy@v1.0
