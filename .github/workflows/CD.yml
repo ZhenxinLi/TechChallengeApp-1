@@ -1,0 +1,41 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - main
+      - feature/**
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-go@v3.2.1
+    - name: Build
+      run: |
+        chmod +x build.sh
+        ./build.sh
+    - name: Deploy to Server
+      uses: AEnterprise/rsync-deploy@v1.0
+      env:
+        DEPLOY_KEY: ${{ secrets.DEPLOY_PRI_KEY }}
+        ARGS: "-c -r --delete --exclude='config.toml'"
+        SERVER_PORT: '${{ secrets.SSH_PORT }}'
+        FOLDER: ./dist/*
+        SERVER_IP: ${{ secrets.SSH_HOST }}
+        USERNAME: ${{ secrets.SSH_USERNAME }}
+        SERVER_DESTINATION: ${{ secrets.SERVER_PATH }}
+    - name: Restart service
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        port: ${{ secrets.SSH_PORT }}
+        key: ${{ secrets.DEPLOY_PRI_KEY }}
+        script: supervisorctl restart TechChallengeApp
