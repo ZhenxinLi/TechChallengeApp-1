@@ -21,6 +21,7 @@ jobs:
       run: |
         chmod +x build.sh
         go get github.com/GeertJohan/go.rice/...
+        export PATH="$PATH:$GOPATH/bin/"
         sudo dpkg-reconfigure dash
         ./build.sh
     - name: Deploy to Server
