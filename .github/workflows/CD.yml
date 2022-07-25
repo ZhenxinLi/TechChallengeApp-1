@@ -18,6 +18,9 @@ jobs:
     - uses: actions/setup-go@v3.2.1
     - name: Build
       run: |
+        GO111MODULE=off go get github.com/GeertJohan/go.rice/...
+        export GOPATH=$(go env GOPATH)
+        export PATH=$PATH:$(go env GOPATH)/bin
         chmod +x build.sh
         go get github.com/GeertJohan/go.rice/...
         export PATH="$PATH:$GOPATH/bin/"
